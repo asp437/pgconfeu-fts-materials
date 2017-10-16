@@ -1,0 +1,777 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11devel
+-- Dumped by pg_dump version 11devel
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: hunspell_de_de; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS hunspell_de_de WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hunspell_de_de; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION hunspell_de_de IS 'German Hunspell Dictionary';
+
+
+--
+-- Name: hunspell_en_us; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS hunspell_en_us WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hunspell_en_us; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION hunspell_en_us IS 'Deutch Hunspell Dictionary';
+
+
+SET search_path = public, pg_catalog;
+
+
+--
+-- Name: polish_hunspell; Type: TEXT SEARCH DICTIONARY; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH DICTIONARY polish_hunspell (
+    TEMPLATE = pg_catalog.ispell,
+    dictfile = 'pl_pl', afffile = 'pl_pl', stopwords = 'polish' );
+
+
+--
+-- Name: TEXT SEARCH DICTIONARY polish_hunspell; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TEXT SEARCH DICTIONARY polish_hunspell IS 'hunspell dictionary for polish language';
+
+
+--
+-- Name: apod_en_de; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION apod_en_de (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR asciiword WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR word WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR hword_part WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR hword_asciipart WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR asciihword WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR hword WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_de
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: apod_en_pl; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION apod_en_pl (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR asciiword WITH 
+CASE
+	WHEN english_hunspell AND polish_hunspell THEN
+		english_hunspell UNION polish_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN polish_hunspell THEN
+		polish_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR word WITH 
+CASE
+	WHEN english_hunspell AND polish_hunspell THEN
+		english_hunspell UNION polish_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN polish_hunspell THEN
+		polish_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR hword_part WITH 
+CASE
+	WHEN english_hunspell AND polish_hunspell THEN
+		english_hunspell UNION polish_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN polish_hunspell THEN
+		polish_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR hword_asciipart WITH 
+CASE
+	WHEN english_hunspell AND polish_hunspell THEN
+		english_hunspell UNION polish_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN polish_hunspell THEN
+		polish_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR asciihword WITH 
+CASE
+	WHEN english_hunspell AND german_hunspell THEN
+		english_hunspell UNION german_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN german_hunspell THEN
+		german_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR hword WITH 
+CASE
+	WHEN english_hunspell AND polish_hunspell THEN
+		english_hunspell UNION polish_hunspell
+	WHEN english_hunspell THEN
+		english_hunspell
+	WHEN polish_hunspell THEN
+		polish_hunspell
+	ELSE simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION apod_en_pl
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: english_exact; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION english_exact (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR asciiword WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR word WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR hword_part WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR hword_asciipart WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR asciihword WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR hword WITH 
+CASE
+	WHEN english_hunspell THEN
+		english_hunspell UNION simple
+	ELSE english_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_exact
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: english_unaccent; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION english_unaccent (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION english_unaccent
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: german_exact; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION german_exact (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR asciiword WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR word WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR hword_part WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR hword_asciipart WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR asciihword WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR hword WITH 
+CASE
+	WHEN german_hunspell THEN
+		german_hunspell UNION simple
+	ELSE german_stem UNION simple
+END;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_exact
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: german_unaccent; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION german_unaccent (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION german_unaccent
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: polish_hunspell; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH CONFIGURATION polish_hunspell (
+    PARSER = pg_catalog."default" );
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR asciiword WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR word WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR numword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR email WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR url WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR host WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR sfloat WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR version WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR hword_numpart WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR hword_part WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR hword_asciipart WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR numhword WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR asciihword WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR hword WITH 
+polish_hunspell, simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR url_path WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR file WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR "float" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR "int" WITH 
+simple;
+
+ALTER TEXT SEARCH CONFIGURATION polish_hunspell
+    ADD MAPPING FOR uint WITH 
+simple;
+
+
+--
+-- Name: TEXT SEARCH CONFIGURATION polish_hunspell; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TEXT SEARCH CONFIGURATION polish_hunspell IS 'hunspell configuration for polish language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
