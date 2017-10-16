@@ -1,9 +1,7 @@
 # Flexible Full Text Search PGConf.EU - additional materials
 
 This repository contains additional materials related to "Flexible Full Text Search" talk at PGConf.EU 2017 in Warsaw.
-
 The patch for flexible FTS configuration can be found at ... branch at [postgrespro fork](https://github.com/postgrespro/postgres) of [PostgreSQL](https://www.postgresql.org/).
-
 The repository consists of two database dumps and few benchmarking scripts.
 
 In directory `bench_scripts` you can find scripts to run performance tests.
