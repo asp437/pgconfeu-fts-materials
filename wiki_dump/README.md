@@ -16,4 +16,4 @@ Since Polish dump contains about ~500k articles it was cut down to 200k articles
 `articles_raw.dump` contains SQL dump of data, and `schema_wiki.dump` contains SQL dump of required additional schema entities such as FTS configurations.
 Data table schema is stored in `articles_raw.dump`
 
-Due to big size of the dump (~1.4GB in tar.bz2 archive) dump moved to Google.Drive. You can download archive [here](https://goo.gl/vkNdBi).
+Due to big size of the dump (~1.4GB in tar.bz2 archive) dump moved to Google.Drive. You can download archive [here](https://goo.gl/qt3vjt).

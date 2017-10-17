@@ -10,6 +10,3 @@ In directory `wiki_dump` you can find a partial dump of Wikipedia articles in En
 
 In directory `apod_dump` you can find a dump of *Astronomy Picture of the Day* data.
 
-> *CAUTION!* Both `wiki_dump` schema and `apod_dump` schema contain configuration for `poslish_hunspell`.
-> This may cause errors for second executed schema dump.
-
