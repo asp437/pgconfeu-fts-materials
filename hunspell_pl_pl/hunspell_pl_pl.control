@@ -1,0 +1,5 @@
+# hunspell_pl_pl extension
+comment = 'Polish Hunspell Dictionary'
+default_version = '1.0'
+module_pathname = '$libdir/hunspell_pl_pl'
+relocatable = true
